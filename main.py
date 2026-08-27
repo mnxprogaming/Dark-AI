@@ -409,10 +409,16 @@ def ai_reply(message):
         conversation += "\nUser: " + message.text
 
         response = client.models.generate_content(
-            model="gemini-3.6-flash",
-            contents=conversation
-        )
-
+    model="gemini-3.6-flash",
+    contents=conversation,
+    config=types.GenerateContentConfig(
+        tools=[
+            types.Tool(
+                google_search=types.GoogleSearch()
+            )
+        ]
+    )
+)
         answer = response.text
 
         add_memory(
