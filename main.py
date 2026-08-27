@@ -1,6 +1,10 @@
 import os
 import sqlite3
 import requests
+import yt_dlp
+import tempfile
+import re
+from urllib.parse import urlparse
 from keep_alive import keep_alive
 import telebot
 from google import genai
