@@ -9,7 +9,6 @@ from keep_alive import keep_alive
 import telebot
 from telebot import types as tg_types
 from google import genai
-from google.genai import types
 from flask import Flask
 from threading import Thread
 
