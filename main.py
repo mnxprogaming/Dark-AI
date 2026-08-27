@@ -486,14 +486,7 @@ def ai_reply(message):
 
         response = client.models.generate_content(
     model="gemini-3.6-flash",
-    contents=conversation,
-    config=types.GenerateContentConfig(
-        tools=[
-            types.Tool(
-                google_search=types.GoogleSearch()
-            )
-        ]
-    )
+    contents=conversation
 )
         answer = response.text
 
