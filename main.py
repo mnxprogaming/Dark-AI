@@ -261,15 +261,37 @@ def download_command(message):
 @bot.message_handler(
     func=lambda message:
     message.content_type == "text"
-    and is_url(message.text)
+    and ("http://" in message.text.lower()
+         or "https://" in message.text.lower())
 )
 def url_downloader(message):
 
-    process_download(
-        message,
-        message.text.strip()
+    text = message.text.strip()
+
+    match = re.search(
+        r'https?://[^\s]+',
+        text,
+        re.IGNORECASE
     )
 
+    if not match:
+        return
+
+    url = match.group(0)
+
+    download_words = [
+        "download",
+        "डाउनलोड",
+        "डाउनलोड करो",
+        "download karo",
+        "video download",
+        "photo download",
+        "video",
+        "photo"
+    ]
+
+    if any(word in text.lower() for word in download_words):
+        process_download(message, url)
 
 def process_download(message, url):
 
