@@ -209,7 +209,158 @@ def clear_command(message):
         "🧠 Tumhari memory clear kar di gayi hai!"
     )
 
+# =========================
+# PHOTO + VIDEO DOWNLOADER
+# =========================
 
+def is_url(text):
+    if not text:
+        return False
+
+    return re.match(
+        r"^https?://",
+        text.strip(),
+        re.IGNORECASE
+    ) is not None
+
+
+def download_media(url):
+    temp_dir = tempfile.mkdtemp()
+
+    ydl_opts = {
+        "outtmpl": os.path.join(temp_dir, "%(title)s.%(ext)s"),
+        "format": "best[ext=mp4]/best",
+        "noplaylist": True,
+        "quiet": True,
+        "no_warnings": True,
+        "max_filesize": 50 * 1024 * 1024
+    }
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(url, download=True)
+        filename = ydl.prepare_filename(info)
+
+    return filename
+
+
+@bot.message_handler(commands=["download"])
+def download_command(message):
+
+    text = message.text.replace("/download", "", 1).strip()
+
+    if not text:
+        bot.reply_to(
+            message,
+            "📥 Usage:\n\n/download <video/photo link>"
+        )
+        return
+
+    process_download(message, text)
+
+
+@bot.message_handler(
+    func=lambda message:
+    message.content_type == "text"
+    and is_url(message.text)
+)
+def url_downloader(message):
+
+    process_download(
+        message,
+        message.text.strip()
+    )
+
+
+def process_download(message, url):
+
+    try:
+
+        bot.send_chat_action(
+            message.chat.id,
+            "upload_video"
+        )
+
+        status = bot.reply_to(
+            message,
+            "⏳ Media download ho raha hai..."
+        )
+
+        file_path = download_media(url)
+
+        if not os.path.exists(file_path):
+            bot.edit_message_text(
+                "❌ Media download nahi ho paya.",
+                message.chat.id,
+                status.message_id
+            )
+            return
+
+        file_size = os.path.getsize(file_path)
+
+        # Telegram upload safety limit for this bot setup
+        if file_size > 50 * 1024 * 1024:
+
+            bot.edit_message_text(
+                "❌ File bahut badi hai.\n"
+                "Please chhota video/link try karo.",
+                message.chat.id,
+                status.message_id
+            )
+
+            os.remove(file_path)
+            return
+
+        bot.edit_message_text(
+            "📤 Download complete!\n"
+            "Telegram par upload ho raha hai...",
+            message.chat.id,
+            status.message_id
+        )
+
+        extension = os.path.splitext(file_path)[1].lower()
+
+        with open(file_path, "rb") as media:
+
+            if extension in [".jpg", ".jpeg", ".png", ".webp"]:
+
+                bot.send_photo(
+                    message.chat.id,
+                    media,
+                    caption="🖼️ Download complete\n🤖 Dark AI"
+                )
+
+            else:
+
+                bot.send_video(
+                    message.chat.id,
+                    media,
+                    caption="🎬 Download complete\n🤖 Dark AI",
+                    supports_streaming=True
+                )
+
+        os.remove(file_path)
+
+        try:
+            bot.delete_message(
+                message.chat.id,
+                status.message_id
+            )
+        except:
+            pass
+
+    except Exception as e:
+
+        print("DOWNLOAD ERROR:", e)
+
+        bot.reply_to(
+            message,
+            "❌ Download failed.\n\n"
+            "Possible reasons:\n"
+            "• Link private hai\n"
+            "• Link supported nahi hai\n"
+            "• Video unavailable hai\n"
+            "• File bahut badi hai"
+        )
 # =========================
 # AI MESSAGE HANDLER
 # =========================
