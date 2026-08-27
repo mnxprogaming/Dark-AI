@@ -193,9 +193,9 @@ Main tumhara personal AI assistant hoon.
         callback_data="downloader"
     )
 
-    btn_memory = tg_types.InlineKeyboardButton(
-        "🧠 Memory",
-        callback_data="memory"
+    btn_number = tg_types.InlineKeyboardButton(
+    "📱 Number Check",
+    callback_data="number_check"
     )
 
     btn_tools = tg_types.InlineKeyboardButton(
@@ -204,11 +204,11 @@ Main tumhara personal AI assistant hoon.
     )
 
     markup.add(
-        btn_ai,
-        btn_download,
-        btn_memory,
-        btn_tools
-    )
+    btn_ai,
+    btn_download,
+    btn_number,
+    btn_tools
+   )
 
     bot.send_message(
         message.chat.id,
@@ -257,7 +257,19 @@ def menu_callback(call):
             "Memory clear karne ke liye:\n"
             "/clear"
         )
+elif call.data == "number_check":
 
+    bot.answer_callback_query(call.id)
+
+    bot.send_message(
+        call.message.chat.id,
+        "📱 Number Check\n\n"
+        "Phone number bhejo.\n\n"
+        "Example:\n"
+        "+919696712836\n\n"
+        "Ya likho:\n"
+        "Is number ke baare me batao +919696712836"
+    )
     elif call.data == "tools":
 
         bot.answer_callback_query(call.id)
