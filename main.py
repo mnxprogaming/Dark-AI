@@ -461,6 +461,69 @@ def process_download(message, url):
             "• File bahut badi hai"
         )
 # =========================
+# PHONE NUMBER FUNCTIONS
+# =========================
+
+def extract_phone_number(text):
+    if not text:
+        return None
+
+    match = re.search(
+        r'(?<!\d)(\+?\d[\d\s\-()]{7,}\d)(?!\d)',
+        text
+    )
+
+    if match:
+        return match.group(1).strip()
+
+    return None
+
+
+def check_phone_number(phone):
+    try:
+        cleaned_phone = re.sub(r'[\s\-()]', '', phone)
+
+        parsed = phonenumbers.parse(cleaned_phone, None)
+
+        valid = phonenumbers.is_valid_number(parsed)
+
+        country = geocoder.country_name_for_number(
+            parsed,
+            "en"
+        )
+
+        region = geocoder.description_for_number(
+            parsed,
+            "en"
+        )
+
+        carrier_name = carrier.name_for_number(
+            parsed,
+            "en"
+        )
+
+        number_type = phonenumbers.number_type(parsed)
+
+        if number_type == phonenumbers.PhoneNumberType.MOBILE:
+            phone_type = "Mobile"
+        elif number_type == phonenumbers.PhoneNumberType.FIXED_LINE:
+            phone_type = "Fixed Line"
+        elif number_type == phonenumbers.PhoneNumberType.FIXED_LINE_OR_MOBILE:
+            phone_type = "Mobile / Fixed Line"
+        else:
+            phone_type = "Unknown"
+
+        return {
+            "valid": valid,
+            "country": country or "Unknown",
+            "carrier": carrier_name or "Unknown",
+            "type": phone_type,
+            "region": region or "Unknown"
+        }
+
+    except NumberParseException:
+        return None
+# =========================
 # AUTOMATIC PHONE NUMBER CHECK
 # =========================
 
