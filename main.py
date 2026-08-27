@@ -245,18 +245,7 @@ def menu_callback(call):
             "Example:\n"
             "Download this video https://example.com/video"
         )
-
-    elif call.data == "memory":
-
-        bot.answer_callback_query(call.id)
-
-        bot.send_message(
-            call.message.chat.id,
-            "🧠 Dark AI tumhari conversation memory "
-            "save karta hai.\n\n"
-            "Memory clear karne ke liye:\n"
-            "/clear"
-        )
+ 
 elif call.data == "number_check":
 
     bot.answer_callback_query(call.id)
