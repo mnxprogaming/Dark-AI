@@ -245,20 +245,21 @@ def menu_callback(call):
             "Example:\n"
             "Download this video https://example.com/video"
         )
- 
-elif call.data == "number_check":
 
-    bot.answer_callback_query(call.id)
+    elif call.data == "number_check":
 
-    bot.send_message(
-        call.message.chat.id,
-        "📱 Number Check\n\n"
-        "Phone number bhejo.\n\n"
-        "Example:\n"
-        "+919696712836\n\n"
-        "Ya likho:\n"
-        "Is number ke baare me batao +919696712836"
-    )
+        bot.answer_callback_query(call.id)
+
+        bot.send_message(
+            call.message.chat.id,
+            "📱 Number Check\n\n"
+            "Phone number bhejo.\n\n"
+            "Example:\n"
+            "+919696712836\n\n"
+            "Ya likho:\n"
+            "Is number ke baare me batao +919696712836"
+        )
+
     elif call.data == "tools":
 
         bot.answer_callback_query(call.id)
@@ -267,6 +268,7 @@ elif call.data == "number_check":
             call.message.chat.id,
             "🛠️ Tools\n\n"
             "📥 Video/Photo Downloader\n"
+            "📱 Number Check\n"
             "🧠 Permanent Memory\n"
             "🤖 AI Assistant\n"
             "💻 Coding Help\n"
