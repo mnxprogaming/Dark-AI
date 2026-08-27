@@ -7,6 +7,7 @@ import re
 from urllib.parse import urlparse
 from keep_alive import keep_alive
 import telebot
+from telebot import types as tg_types
 from google import genai
 from google.genai import types
 from flask import Flask
@@ -165,36 +166,110 @@ def save_to_google_sheet(user_id, username, message, reply):
 
 
 # =========================
-# START COMMAND
+# START MENU
 # =========================
 
 @bot.message_handler(commands=["start"])
 def start_command(message):
 
     welcome = f"""
-🤖 Welcome to {AI_NAME}!
+🤖 Welcome to {AI_NAME}! ❤️
 
-Main tumhara personal AI assistant hoon. ❤️
+Main tumhara personal AI assistant hoon.
 
-✨ Main ye kaam kar sakta hoon:
-
-🧠 Questions & Answers
-💻 Coding
-📝 Writing
-📚 Study
-🌐 Translation
-💡 Ideas
-📐 Maths
-📖 Story & Content
-🧠 Permanent Memory
-
-Bas apna sawaal bhejo aur main jawab dunga.
-
-🚀 Let's start!
+👇 Neeche menu se feature choose karo:
 """
 
-    bot.reply_to(message, welcome)
+    markup = tg_types.InlineKeyboardMarkup(row_width=2)
 
+    btn_ai = tg_types.InlineKeyboardButton(
+        "🤖 AI Chat",
+        callback_data="ai_chat"
+    )
+
+    btn_download = tg_types.InlineKeyboardButton(
+        "📥 Downloader",
+        callback_data="downloader"
+    )
+
+    btn_memory = tg_types.InlineKeyboardButton(
+        "🧠 Memory",
+        callback_data="memory"
+    )
+
+    btn_tools = tg_types.InlineKeyboardButton(
+        "🛠️ Tools",
+        callback_data="tools"
+    )
+
+    markup.add(
+        btn_ai,
+        btn_download,
+        btn_memory,
+        btn_tools
+    )
+
+    bot.send_message(
+        message.chat.id,
+        welcome,
+        reply_markup=markup
+    )
+
+
+# =========================
+# MENU BUTTON HANDLER
+# =========================
+
+@bot.callback_query_handler(func=lambda call: True)
+def menu_callback(call):
+
+    if call.data == "ai_chat":
+
+        bot.answer_callback_query(call.id)
+
+        bot.send_message(
+            call.message.chat.id,
+            "🤖 AI Chat active hai.\n\n"
+            "Apna sawaal bhejo, Dark AI jawab dega."
+        )
+
+    elif call.data == "downloader":
+
+        bot.answer_callback_query(call.id)
+
+        bot.send_message(
+            call.message.chat.id,
+            "📥 Downloader\n\n"
+            "Video/photo ka link bhejo.\n"
+            "Example:\n"
+            "Download this video https://example.com/video"
+        )
+
+    elif call.data == "memory":
+
+        bot.answer_callback_query(call.id)
+
+        bot.send_message(
+            call.message.chat.id,
+            "🧠 Dark AI tumhari conversation memory "
+            "save karta hai.\n\n"
+            "Memory clear karne ke liye:\n"
+            "/clear"
+        )
+
+    elif call.data == "tools":
+
+        bot.answer_callback_query(call.id)
+
+        bot.send_message(
+            call.message.chat.id,
+            "🛠️ Tools\n\n"
+            "📥 Video/Photo Downloader\n"
+            "🧠 Permanent Memory\n"
+            "🤖 AI Assistant\n"
+            "💻 Coding Help\n"
+            "📝 Writing Help"
+        )
 
 # =========================
 # CLEAR MEMORY COMMAND
