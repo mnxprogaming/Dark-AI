@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 from keep_alive import keep_alive
 import telebot
 from google import genai
+from google.genai import types
 from flask import Flask
 from threading import Thread
 
