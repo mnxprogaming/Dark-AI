@@ -4,6 +4,8 @@ import requests
 import yt_dlp
 import tempfile
 import re
+import phonenumbers
+from phonenumbers import carrier, geocoder, NumberParseException
 from urllib.parse import urlparse
 from keep_alive import keep_alive
 import telebot
@@ -461,6 +463,20 @@ def process_download(message, url):
 # =========================
 # AI MESSAGE HANDLER
 # =========================
+
+def extract_phone_number(text):
+    if not text:
+        return None
+
+    match = re.search(
+        r'(?<!\d)(\+?\d[\d\s\-()]{7,}\d)(?!\d)',
+        text
+    )
+
+    if match:
+        return match.group(1).strip()
+
+    return None
 
 @bot.message_handler(func=lambda message: True)
 def ai_reply(message):
