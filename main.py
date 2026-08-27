@@ -461,22 +461,53 @@ def process_download(message, url):
             "• File bahut badi hai"
         )
 # =========================
-# AI MESSAGE HANDLER
+# AUTOMATIC PHONE NUMBER CHECK
 # =========================
 
-def extract_phone_number(text):
-    if not text:
-        return None
+@bot.message_handler(
+    func=lambda message:
+    message.content_type == "text"
+    and extract_phone_number(message.text) is not None
+)
+def phone_number_handler(message):
 
-    match = re.search(
-        r'(?<!\d)(\+?\d[\d\s\-()]{7,}\d)(?!\d)',
-        text
-    )
+    phone = extract_phone_number(message.text)
 
-    if match:
-        return match.group(1).strip()
+    result = check_phone_number(phone)
 
-    return None
+    if not result:
+        bot.reply_to(
+            message,
+            "❌ Number ko samajh nahi paaya.\n"
+            "Example: +919876543210"
+        )
+        return
+
+    valid_text = "Yes" if result["valid"] else "No"
+
+    reply = f"""
+📱 Number Check
+
+Number: {phone}
+✅ Valid: {valid_text}
+🇮🇳 Country: {result["country"] or "Unknown"}
+📡 Carrier: {result["carrier"]}
+📱 Type: {result["type"]}
+📍 Region: {result["region"]}
+
+🔎 Public Information
+Name: Public source se available nahi
+Business: Public source se available nahi
+Website: Public source se available nahi
+Spam reports: Public source se available nahi
+
+⚠️ Sirf publicly available information dikhayi gayi hai.
+"""
+
+    bot.reply_to(message, reply)
+# =========================
+# AI MESSAGE HANDLER
+# =========================
 
 @bot.message_handler(func=lambda message: True)
 def ai_reply(message):
