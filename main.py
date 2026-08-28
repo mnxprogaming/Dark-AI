@@ -619,10 +619,11 @@ def image_ai_handler(message):
 
         answer = response.text
 
-        bot.reply_to(
-            message,
-            "🖼️ **Image AI Analysis**\n\n" + answer,
-            
+        bot.send_message(
+    message.chat.id,
+    "🖼️ Dark AI Image Analysis\n\n" + str(answer),
+    parse_mode=None
+)
 
     except Exception as e:
         print("IMAGE AI ERROR:", e)
