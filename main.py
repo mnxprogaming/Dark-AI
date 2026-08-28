@@ -622,7 +622,7 @@ def image_ai_handler(message):
 
         # Gemini ko image + prompt bhejo
         response = client.models.generate_content(
-            model="gemini-3.6-flash",
+            model="gemini-3.7-flash",
             contents=[
                 {
                     "inline_data": {
