@@ -573,6 +573,23 @@ Spam reports: Public source se available nahi
 
     bot.reply_to(message, reply)
 # =========================
+# CHECK GEMINI MODELS
+# =========================
+
+try:
+    print("\n===== AVAILABLE GEMINI MODELS =====")
+
+    for model in client.models.list():
+        print(
+            model.name,
+            "|",
+            getattr(model, "supported_actions", None)
+        )
+
+except Exception as e:
+    print("MODEL LIST ERROR:", e)
+
+# =========================
 # IMAGE AI
 # =========================
 
