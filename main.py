@@ -573,6 +573,67 @@ Spam reports: Public source se available nahi
 
     bot.reply_to(message, reply)
 # =========================
+# IMAGE AI
+# =========================
+
+@bot.message_handler(content_types=["photo"])
+def image_ai_handler(message):
+    try:
+        bot.send_chat_action(
+            message.chat.id,
+            "typing"
+        )
+
+        # Telegram se photo file information lo
+        file_info = bot.get_file(
+            message.photo[-1].file_id
+        )
+
+        # Image download karo
+        image_bytes = bot.download_file(
+            file_info.file_path
+        )
+
+        # User ka question
+        prompt = message.caption or (
+            "Is image ko dhyan se analyze karo. "
+            "Image mein kya dikh raha hai, "
+            "important details aur agar text hai "
+            "to uska bhi batao. "
+            "Hindi/Hinglish mein jawab do."
+        )
+
+        # Gemini ko image + prompt bhejo
+        response = client.models.generate_content(
+            model="gemini-3.6-flash",
+            contents=[
+                {
+                    "inline_data": {
+                        "mime_type": "image/jpeg",
+                        "data": image_bytes
+                    }
+                },
+                prompt
+            ]
+        )
+
+        answer = response.text
+
+        bot.reply_to(
+            message,
+            "🖼️ **Image AI Analysis**\n\n" + answer,
+            parse_mode="Markdown"
+        )
+
+    except Exception as e:
+        print("IMAGE AI ERROR:", e)
+
+        bot.reply_to(
+            message,
+            "❌ Image analyze nahi ho payi.\n\n"
+            "Error: " + str(e)
+        )
+# =========================
 # AI MESSAGE HANDLER
 # =========================
 
