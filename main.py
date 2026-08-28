@@ -142,7 +142,8 @@ init_database()
 # GOOGLE SHEETS
 # =========================
 
-GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxxCtHcajJiRnhFTuuEZKETUq07-L7UnIEtgQWInH2GTupPhdsRGIjHP7raCcNzu4aa/exec"
+GOOGLE_SHEET_URL = os.environ.get("GOOGLE_SHEET_URL")
+
 
 def save_to_google_sheet(user_id, username, message, reply):
     try:
