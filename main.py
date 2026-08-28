@@ -622,8 +622,7 @@ def image_ai_handler(message):
         bot.reply_to(
             message,
             "🖼️ **Image AI Analysis**\n\n" + answer,
-            parse_mode="Markdown"
-        )
+            
 
     except Exception as e:
         print("IMAGE AI ERROR:", e)
