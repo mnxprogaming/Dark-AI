@@ -796,7 +796,7 @@ def ai_reply(message):
 # 🌐 AUTO WEB SEARCH
 # ==============================
 
-if needs_web_search(message.text):
+        if needs_web_search(message.text):
 
     results = web_search(message.text, 5)
 
