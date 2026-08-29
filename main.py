@@ -816,13 +816,17 @@ def ai_reply(message):
 {web_context}
 
 IMPORTANT:
-- User ke question ka answer search results ke basis par do.
-- Latest/current information ko priority do.
-- Facts invent mat karo.
-- Hindi/Hinglish mein clear answer do.
-- Agar search results mein answer nahi hai to clearly batao.
-- Answer ke end mein relevant Sources mention karo.
-
+- Sirf diye gaye WEB SEARCH RESULTS ka use karo.
+- Search results mein jo actual news/events hain unhe identify karo.
+- User ne "aaj ki khabrein" poocha hai to 5-10 important headlines
+  short summary ke saath batao.
+- News portals ke homepage ya links ki list mat do.
+- "Google News check karein" jaisa generic jawab mat do.
+- Search result mein information available ho to "information
+  available nahi hai" mat bolo.
+- Har important news ke saath source ka naam aur URL do.
+- Search results mein jo information nahi hai usko invent mat karo.
+- Hindi/Hinglish mein jawab do.
 """
 
         conversation += "\nUser: " + message.text
