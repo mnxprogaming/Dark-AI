@@ -48,7 +48,41 @@ def web_search(query, max_results=5):
         print(f"Web Search Error: {e}")
         return []
 
+# ==============================
+# 🤖 AUTO WEB SEARCH DETECTION
+# ==============================
 
+def needs_web_search(text):
+    text = text.lower().strip()
+
+    keywords = [
+        "latest",
+        "आज",
+        "अभी",
+        "ताजा",
+        "ताज़ा",
+        "news",
+        "न्यूज़",
+        "समाचार",
+        "weather",
+        "मौसम",
+        "price",
+        "कीमत",
+        "भाव",
+        "rate",
+        "रेट",
+        "live",
+        "लाइव",
+        "current",
+        "अभी का",
+        "आज का",
+        "आज की",
+        "कौन जीता",
+        "result",
+        "रिजल्ट"
+    ]
+
+    return any(keyword in text for keyword in keywords)
 
 
 # =========================
