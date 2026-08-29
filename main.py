@@ -789,32 +789,45 @@ def ai_reply(message):
         conversation = SYSTEM_PROMPT + "\n\n"
 
         for role, text in history:
-            conversation += role + ": " + text + "\n"
+    conversation += role + ": " + text + "\n"
+
+
 # ==============================
 # 🌐 AUTO WEB SEARCH
 # ==============================
 
 if needs_web_search(message.text):
+
     results = web_search(message.text, 5)
 
     if results:
+
         web_context = "\n\n".join(
+            f"Source {i}:\n"
             f"Title: {r['title']}\n"
             f"Content: {r['body']}\n"
             f"URL: {r['url']}"
-            for r in results
+            for i, r in enumerate(results, 1)
         )
 
-        conversation += (
-            "\n\nInternet Search Results:\n"
-            + web_context
-            + "\n\n"
-            "User ke question ka answer in web results "
-            "ke basis par accurate Hindi/Hinglish mein do. "
-            "End mein Sources bhi mention karo.\n"
-        )
+        conversation += f"""
 
-        conversation += "\nUser: " + message.text
+🌐 WEB SEARCH RESULTS
+
+{web_context}
+
+IMPORTANT:
+- User ke question ka answer in search results ke basis par do.
+- Latest/current information ko priority do.
+- Facts invent mat karo.
+- Hindi/Hinglish mein clear answer do.
+- Agar search results mein answer nahi hai to clearly batao.
+- Answer ke end mein relevant Sources mention karo.
+
+"""
+
+
+conversation += "\nUser: " + message.text
 
         response = client.models.generate_content(
     model="gemini-3.6-flash",
