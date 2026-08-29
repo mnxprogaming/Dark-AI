@@ -19,6 +19,35 @@ from duckduckgo_search import DDGS
 # WEB SERVER
 # =========================
 
+# ==============================
+# 🌐 WEB SEARCH FEATURE
+# ==============================
+
+def web_search(query, max_results=5):
+    try:
+        results = []
+
+        with DDGS() as ddgs:
+            search_results = ddgs.text(
+                query,
+                region="in-en",
+                safesearch="moderate",
+                max_results=max_results
+            )
+
+            for r in search_results:
+                results.append({
+                    "title": r.get("title", ""),
+                    "body": r.get("body", ""),
+                    "url": r.get("href", "")
+                })
+
+        return results
+
+    except Exception as e:
+        print(f"Web Search Error: {e}")
+        return []
+
 
 
 
