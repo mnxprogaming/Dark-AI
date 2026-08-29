@@ -787,8 +787,8 @@ def ai_reply(message):
         history = get_memory(user_id, 10)
 
         conversation = SYSTEM_PROMPT + "\n\n"
-
-            for role, text in history:
+        
+        for role, text in history:
     conversation += role + ": " + text + "\n"
 
 
@@ -828,6 +828,7 @@ IMPORTANT:
 
 
 conversation += "\nUser: " + message.text
+            
 
         response = client.models.generate_content(
     model="gemini-3.6-flash",
