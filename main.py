@@ -787,37 +787,36 @@ def ai_reply(message):
         history = get_memory(user_id, 10)
 
         conversation = SYSTEM_PROMPT + "\n\n"
-        
+
         for role, text in history:
             conversation += role + ": " + text + "\n"
 
+        # ==============================
+        # 🌐 AUTO WEB SEARCH
+        # ==============================
 
-# ==============================
-# 🌐 AUTO WEB SEARCH
-# ==============================
+        if needs_web_search(message.text):
 
-    if needs_web_search(message.text):
+            results = web_search(message.text, 5)
 
-    results = web_search(message.text, 5)
+            if results:
 
-    if results:
+                web_context = "\n\n".join(
+                    f"Source {i}:\n"
+                    f"Title: {r['title']}\n"
+                    f"Content: {r['body']}\n"
+                    f"URL: {r['url']}"
+                    for i, r in enumerate(results, 1)
+                )
 
-        web_context = "\n\n".join(
-            f"Source {i}:\n"
-            f"Title: {r['title']}\n"
-            f"Content: {r['body']}\n"
-            f"URL: {r['url']}"
-            for i, r in enumerate(results, 1)
-        )
-
-        conversation += f"""
+                conversation += f"""
 
 🌐 WEB SEARCH RESULTS
 
 {web_context}
 
 IMPORTANT:
-- User ke question ka answer in search results ke basis par do.
+- User ke question ka answer search results ke basis par do.
 - Latest/current information ko priority do.
 - Facts invent mat karo.
 - Hindi/Hinglish mein clear answer do.
@@ -826,14 +825,13 @@ IMPORTANT:
 
 """
 
-
         conversation += "\nUser: " + message.text
-            
 
         response = client.models.generate_content(
-    model="gemini-3.6-flash",
-    contents=conversation
-)
+            model="gemini-3.6-flash",
+            contents=conversation
+        )
+
         answer = response.text
 
         add_memory(
@@ -847,11 +845,14 @@ IMPORTANT:
             "Dark AI",
             answer
         )
+
         save_to_google_sheet(
-    user_id,
-    message.from_user.username or "",
-    message.text,
-    answer)
+            user_id,
+            message.from_user.username or "",
+            message.text,
+            answer
+        )
+
         bot.reply_to(
             message,
             answer
@@ -865,7 +866,6 @@ IMPORTANT:
             message,
             "❌ AI Error:\n" + str(e)
         )
-
 
 # =========================
 # START BOT
