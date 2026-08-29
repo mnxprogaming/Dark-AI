@@ -827,7 +827,7 @@ IMPORTANT:
 """
 
 
-conversation += "\nUser: " + message.text
+        conversation += "\nUser: " + message.text
             
 
         response = client.models.generate_content(
