@@ -790,6 +790,29 @@ def ai_reply(message):
 
         for role, text in history:
             conversation += role + ": " + text + "\n"
+# ==============================
+# 🌐 AUTO WEB SEARCH
+# ==============================
+
+if needs_web_search(message.text):
+    results = web_search(message.text, 5)
+
+    if results:
+        web_context = "\n\n".join(
+            f"Title: {r['title']}\n"
+            f"Content: {r['body']}\n"
+            f"URL: {r['url']}"
+            for r in results
+        )
+
+        conversation += (
+            "\n\nInternet Search Results:\n"
+            + web_context
+            + "\n\n"
+            "User ke question ka answer in web results "
+            "ke basis par accurate Hindi/Hinglish mein do. "
+            "End mein Sources bhi mention karo.\n"
+        )
 
         conversation += "\nUser: " + message.text
 
