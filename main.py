@@ -789,7 +789,7 @@ def ai_reply(message):
         conversation = SYSTEM_PROMPT + "\n\n"
         
         for role, text in history:
-    conversation += role + ": " + text + "\n"
+        conversation += role + ": " + text + "\n"
 
 
 # ==============================
