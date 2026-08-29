@@ -4,4 +4,4 @@ flask
 requests
 yt-dlp
 phonenumbers
-duckduckgo-search
+ddgs
