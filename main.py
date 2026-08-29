@@ -681,6 +681,60 @@ def image_ai_handler(message):
             "Error: " + str(e)
         )
 # =========================
+# 🌐 WEB SEARCH COMMAND
+# =========================
+
+@bot.message_handler(commands=["search"])
+def search_command(message):
+
+    query = message.text.replace("/search", "", 1).strip()
+
+    if not query:
+        bot.reply_to(
+            message,
+            "🌐 Web Search\n\n"
+            "Aise use karo:\n"
+            "/search आज की भारत की खबरें"
+        )
+        return
+
+    try:
+        bot.send_chat_action(
+            message.chat.id,
+            "typing"
+        )
+
+        results = web_search(query, 5)
+
+        if not results:
+            bot.reply_to(
+                message,
+                "❌ Search results nahi mile."
+            )
+            return
+
+        reply = "🌐 Web Search Results\n\n"
+
+        for i, result in enumerate(results, 1):
+            reply += (
+                f"{i}. {result['title']}\n"
+                f"{result['body'][:300]}\n"
+                f"🔗 {result['url']}\n\n"
+            )
+
+        bot.reply_to(
+            message,
+            reply,
+            disable_web_page_preview=True
+        )
+
+    except Exception as e:
+        print("WEB SEARCH ERROR:", e)
+        bot.reply_to(
+            message,
+            "❌ Web Search Error:\n" + str(e)
+        )
+# =========================
 # AI MESSAGE HANDLER
 # =========================
 
