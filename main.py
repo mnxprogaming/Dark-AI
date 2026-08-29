@@ -13,6 +13,7 @@ from telebot import types as tg_types
 from google import genai
 from flask import Flask
 from threading import Thread
+from duckduckgo_search import DDGS
 
 # =========================
 # WEB SERVER
