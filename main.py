@@ -1036,7 +1036,9 @@ def voice_handler(message):
         )
 
         # Telegram voice file
-        file_info = bot.get_file(message.voice.file_id)
+        file_info = bot.get_file(
+            message.voice.file_id
+        )
 
         # Voice download
         voice_data = bot.download_file(
@@ -1060,18 +1062,31 @@ def voice_handler(message):
             ".wav"
         )
 
-        audio = AudioSegment.from_ogg(ogg_path)
-        audio.export(wav_path, format="wav")
+        audio = AudioSegment.from_ogg(
+            ogg_path
+        )
 
-        # Speech → Text
+        audio.export(
+            wav_path,
+            format="wav"
+        )
+
+        # ==============================
+        # 🎤 SPEECH TO TEXT
+        # ==============================
+
         import speech_recognition as sr
 
         recognizer = sr.Recognizer()
 
         with sr.AudioFile(wav_path) as source:
-            audio_data = recognizer.record(source)
+
+            audio_data = recognizer.record(
+                source
+            )
 
         try:
+
             text = recognizer.recognize_google(
                 audio_data,
                 language="hi-IN"
@@ -1084,21 +1099,53 @@ def voice_handler(message):
                 "❌ Voice samajh nahi aayi.\n"
                 "Please dobara clearly bolkar bhejo."
             )
+
             return
 
-# ==============================
-# 🤖 SEND VOICE TEXT TO GEMINI
-# ==============================
+        except sr.RequestError as e:
+
+            bot.reply_to(
+                message,
+                "❌ Speech recognition service "
+                "available nahi hai."
+            )
+
+            print(
+                "SPEECH REQUEST ERROR:",
+                e
+            )
+
+            return
+
+        # ==============================
+        # 🤖 SEND VOICE TEXT TO GEMINI
+        # ==============================
+
         user_id = message.from_user.id
 
-        history = get_memory(user_id, 10)
+        history = get_memory(
+            user_id,
+            10
+        )
 
-        conversation = SYSTEM_PROMPT + "\n\n"
+        conversation = (
+            SYSTEM_PROMPT
+            + "\n\n"
+        )
 
         for role, old_text in history:
-            conversation += role + ": " + old_text + "\n"
 
-        conversation += "\nUser: " + text
+            conversation += (
+                role
+                + ": "
+                + old_text
+                + "\n"
+            )
+
+        conversation += (
+            "\nUser: "
+            + text
+        )
 
         response = client.models.generate_content(
             model="gemini-3.6-flash",
@@ -1106,54 +1153,74 @@ def voice_handler(message):
         )
 
         answer = response.text
-# ==============================
-# 🧠 SAVE MEMORY
-# ==============================
 
-add_memory(
-    user_id,
-    "User",
-    text
-)
+        # ==============================
+        # 🧠 SAVE MEMORY
+        # ==============================
 
-add_memory(
-    user_id,
-    "Dark AI",
-    answer
-)
+        add_memory(
+            user_id,
+            "User",
+            text
+        )
 
-# ==============================
-# 💬 SEND AI REPLY
-# ==============================
+        add_memory(
+            user_id,
+            "Dark AI",
+            answer
+        )
 
-bot.reply_to(
-    message,
-    "🎤 आपने कहा:\n"
-    + text
-    + "\n\n🤖 Dark AI:\n"
-    + answer
-)
+        # ==============================
+        # 💬 SEND AI REPLY
+        # ==============================
 
-        # Temporary files delete
+        bot.reply_to(
+            message,
+            "🎤 आपने कहा:\n"
+            + text
+            + "\n\n"
+            + "🤖 Dark AI:\n"
+            + answer
+        )
+
+        # ==============================
+        # 🗑️ DELETE TEMP FILES
+        # ==============================
+
         try:
-            os.remove(ogg_path)
-            os.remove(wav_path)
-        except:
-            pass
+
+            os.remove(
+                ogg_path
+            )
+
+            os.remove(
+                wav_path
+            )
+
+        except Exception as e:
+
+            print(
+                "TEMP FILE DELETE ERROR:",
+                e
+            )
 
     except Exception as e:
 
-        print("VOICE ERROR:", e)
+        print(
+            "VOICE ERROR:",
+            e
+        )
 
         bot.reply_to(
             message,
             "❌ Voice process nahi ho payi.\n\n"
             + str(e)
         )
+
+
 # =========================
 # AI MESSAGE HANDLER
 # =========================
-
 @bot.message_handler(func=lambda message: True)
 def ai_reply(message):
 
