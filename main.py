@@ -1089,25 +1089,23 @@ def voice_handler(message):
 # ==============================
 # 🤖 SEND VOICE TEXT TO GEMINI
 # ==============================
-
         user_id = message.from_user.id
 
-history = get_memory(user_id, 10)
+        history = get_memory(user_id, 10)
 
-conversation = SYSTEM_PROMPT + "\n\n"
+        conversation = SYSTEM_PROMPT + "\n\n"
 
-for role, old_text in history:
-    conversation += role + ": " + old_text + "\n"
+        for role, old_text in history:
+            conversation += role + ": " + old_text + "\n"
 
-conversation += "\nUser: " + text
+        conversation += "\nUser: " + text
 
-response = client.models.generate_content(
-    model="gemini-3.6-flash",
-    contents=conversation
-)
+        response = client.models.generate_content(
+            model="gemini-3.6-flash",
+            contents=conversation
+        )
 
-answer = response.text
-
+        answer = response.text
 # ==============================
 # 🧠 SAVE MEMORY
 # ==============================
