@@ -908,23 +908,24 @@ except Exception as e:
     print("MODEL LIST ERROR:", e)
 
 # =========================
-# IMAGE AI
+# 🖼️ IMAGE AI
 # =========================
 
 @bot.message_handler(content_types=["photo"])
 def image_ai_handler(message):
+
     try:
         bot.send_chat_action(
             message.chat.id,
             "typing"
         )
 
-        # Telegram se photo file information lo
+        # Telegram se photo file lo
         file_info = bot.get_file(
             message.photo[-1].file_id
         )
 
-        # Image download karo
+        # Image download
         image_bytes = bot.download_file(
             file_info.file_path
         )
@@ -933,40 +934,102 @@ def image_ai_handler(message):
         prompt = message.caption or (
             "Is image ko dhyan se analyze karo. "
             "Image mein kya dikh raha hai, "
-            "important details aur agar text hai "
-            "to uska bhi batao. "
+            "important details batao. "
+            "Agar image mein text hai to uska bhi batao. "
             "Hindi/Hinglish mein jawab do."
         )
 
-        # Gemini ko image + prompt bhejo
-        response = client.models.generate_content(
-            model="gemini-3.6-flash",
-            contents=[
-                {
-                    "inline_data": {
-                        "mime_type": "image/jpeg",
-                        "data": image_bytes
-                    }
-                },
-                prompt
-            ]
-        )
+        # Models ko ek-ek karke try karo
+        models = [
+            "gemini-3.6-flash",
+            "gemini-3.7-flash",
+            "gemini-3.5-flash"
+        ]
+
+        response = None
+        last_error = None
+
+        for model_name in models:
+
+            try:
+
+                print(
+                    "🖼️ Trying image model:",
+                    model_name
+                )
+
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=[
+                        {
+                            "inline_data": {
+                                "mime_type": "image/jpeg",
+                                "data": image_bytes
+                            }
+                        },
+                        prompt
+                    ]
+                )
+
+                print(
+                    "✅ Image model worked:",
+                    model_name
+                )
+
+                break
+
+            except Exception as e:
+
+                last_error = e
+
+                print(
+                    "❌ Image model failed:",
+                    model_name,
+                    e
+                )
+
+        # Koi model kaam nahi kiya
+        if response is None:
+
+            bot.reply_to(
+                message,
+                "❌ Abhi image analysis available nahi hai.\n\n"
+                "Please thodi der baad dobara try karo."
+            )
+
+            print(
+                "ALL IMAGE MODELS FAILED:",
+                last_error
+            )
+
+            return
 
         answer = response.text
 
+        if not answer:
+            answer = (
+                "❌ Image ka answer generate nahi ho paya."
+            )
+
         bot.send_message(
-    message.chat.id,
-    "🖼️ Dark AI Image Analysis\n\n" + str(answer),
-    parse_mode=None
-)
+            message.chat.id,
+            "🖼️ Dark AI Image Analysis\n\n"
+            + str(answer),
+            parse_mode=None
+        )
 
     except Exception as e:
-        print("IMAGE AI ERROR:", e)
+
+        print(
+            "IMAGE AI ERROR:",
+            e
+        )
 
         bot.reply_to(
             message,
             "❌ Image analyze nahi ho payi.\n\n"
-            "Error: " + str(e)
+            "Error: "
+            + str(e)
         )
 # =========================
 # 🌐 WEB SEARCH COMMAND
