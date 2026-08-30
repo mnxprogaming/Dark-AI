@@ -280,6 +280,78 @@ def get_weather(city):
 
         return None
 
+# ==============================
+# 🌦️ WEATHER MESSAGE HANDLER
+# ==============================
+
+@bot.message_handler(
+    func=lambda message:
+    message.content_type == "text"
+    and (
+        "मौसम" in message.text.lower()
+        or "weather" in message.text.lower()
+    )
+)
+def weather_handler(message):
+
+    try:
+        text = message.text.strip()
+
+        city = re.sub(
+            r"(?i)\b(weather|मौसम)\b",
+            "",
+            text
+        ).strip()
+
+        if not city:
+            bot.reply_to(
+                message,
+                "🌦️ मौसम जानने के लिए शहर का नाम लिखें।\n\n"
+                "Example:\n"
+                "मौसम Delhi\n"
+                "Weather Mumbai"
+            )
+            return
+
+        bot.send_chat_action(
+            message.chat.id,
+            "typing"
+        )
+
+        result = get_weather(city)
+
+        if not result:
+            bot.reply_to(
+                message,
+                "❌ इस शहर का मौसम नहीं मिल पाया।"
+            )
+            return
+
+        reply = f"""
+🌦️ Live Weather
+
+📍 Location: {result["city"]}, {result["country"]}
+
+🌡️ Temperature: {result["temperature"]}°C
+🤔 Feels Like: {result["feels_like"]}°C
+💧 Humidity: {result["humidity"]}%
+🌧️ Precipitation: {result["precipitation"]} mm
+💨 Wind Speed: {result["wind"]} km/h
+
+🤖 Dark AI
+"""
+
+        bot.reply_to(message, reply)
+
+    except Exception as e:
+
+        print("WEATHER HANDLER ERROR:", e)
+
+        bot.reply_to(
+            message,
+            "❌ Weather Error:\n" + str(e)
+        )
+
 # =========================
 # GOOGLE SHEETS
 # =========================
