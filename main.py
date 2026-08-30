@@ -287,13 +287,26 @@ def get_weather(city):
 @bot.message_handler(
     func=lambda message:
     message.content_type == "text"
-    and (
-        "मौसम" in message.text.lower()
-        or "weather" in message.text.lower()
-    )
+    and any(word in message.text.lower() for word in [
+        "weather",
+        "मौसम",
+        "temperature",
+        "तापमान",
+        "बारिश",
+        "rain",
+        "humidity",
+        "नमी",
+        "wind",
+        "हवा",
+        "गर्मी",
+        "ठंड",
+        "forecast",
+        "mausam",
+        "weather batao",
+        "mausam batao"
+    ])
 )
 def weather_handler(message):
-
     try:
         text = message.text.strip()
 
