@@ -1090,7 +1090,7 @@ def voice_handler(message):
 # 🤖 SEND VOICE TEXT TO GEMINI
 # ==============================
 
-user_id = message.from_user.id
+        user_id = message.from_user.id
 
 history = get_memory(user_id, 10)
 
