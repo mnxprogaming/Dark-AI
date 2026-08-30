@@ -1086,11 +1086,55 @@ def voice_handler(message):
             )
             return
 
-        # User ko recognized text dikhao
-        bot.reply_to(
-            message,
-            "🎤 Aapne kaha:\n\n" + text
-        )
+# ==============================
+# 🤖 SEND VOICE TEXT TO GEMINI
+# ==============================
+
+user_id = message.from_user.id
+
+history = get_memory(user_id, 10)
+
+conversation = SYSTEM_PROMPT + "\n\n"
+
+for role, old_text in history:
+    conversation += role + ": " + old_text + "\n"
+
+conversation += "\nUser: " + text
+
+response = client.models.generate_content(
+    model="gemini-3.6-flash",
+    contents=conversation
+)
+
+answer = response.text
+
+# ==============================
+# 🧠 SAVE MEMORY
+# ==============================
+
+add_memory(
+    user_id,
+    "User",
+    text
+)
+
+add_memory(
+    user_id,
+    "Dark AI",
+    answer
+)
+
+# ==============================
+# 💬 SEND AI REPLY
+# ==============================
+
+bot.reply_to(
+    message,
+    "🎤 आपने कहा:\n"
+    + text
+    + "\n\n🤖 Dark AI:\n"
+    + answer
+)
 
         # Temporary files delete
         try:
