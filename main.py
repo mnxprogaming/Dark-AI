@@ -353,6 +353,110 @@ def weather_handler(message):
         )
 
 # =========================
+# 💰 CURRENCY CONVERTER
+# =========================
+
+def convert_currency(amount, from_currency, to_currency):
+    try:
+        from_currency = from_currency.upper()
+        to_currency = to_currency.upper()
+
+        url = (
+            f"https://api.frankfurter.dev/v2/rate/"
+            f"{from_currency}/{to_currency}"
+        )
+
+        response = requests.get(url, timeout=10)
+
+        if response.status_code != 200:
+            return None
+
+        data = response.json()
+
+        rate = data.get("rate")
+
+        if rate is None:
+            return None
+
+        converted = amount * float(rate)
+
+        return converted, float(rate)
+
+    except Exception as e:
+        print("CURRENCY ERROR:", e)
+        return None
+
+
+@bot.message_handler(commands=["currency"])
+def currency_command(message):
+
+    text = message.text.replace("/currency", "", 1).strip()
+
+    parts = text.split()
+
+    if len(parts) != 3:
+        bot.reply_to(
+            message,
+            "💰 Currency Converter\n\n"
+            "Use:\n"
+            "/currency 100 USD INR\n\n"
+            "Example:\n"
+            "/currency 100 USD INR"
+        )
+        return
+
+    try:
+        amount = float(parts[0])
+        from_currency = parts[1].upper()
+        to_currency = parts[2].upper()
+
+        result = convert_currency(
+            amount,
+            from_currency,
+            to_currency
+        )
+
+        if not result:
+            bot.reply_to(
+                message,
+                "❌ Currency rate nahi mil paya.\n"
+                "Currency code check karo.\n\n"
+                "Example: USD INR"
+            )
+            return
+
+        converted, rate = result
+
+        reply = f"""
+💰 Currency Converter
+
+💵 Amount: {amount:g} {from_currency}
+🔄 Rate: 1 {from_currency} = {rate:.4f} {to_currency}
+
+💸 Result: {converted:.2f} {to_currency}
+
+🤖 Dark AI
+"""
+
+        bot.reply_to(message, reply)
+
+    except ValueError:
+        bot.reply_to(
+            message,
+            "❌ Amount galat hai.\n\n"
+            "Example:\n"
+            "/currency 100 USD INR"
+        )
+
+    except Exception as e:
+        print("CURRENCY COMMAND ERROR:", e)
+
+        bot.reply_to(
+            message,
+            "❌ Currency conversion error."
+        )
+
+# =========================
 # GOOGLE SHEETS
 # =========================
 
