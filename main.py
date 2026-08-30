@@ -1071,9 +1071,9 @@ def voice_handler(message):
             format="wav"
         )
 
-        # ==============================
-        # 🎤 SPEECH TO TEXT
-        # ==============================
+# ==============================
+# 🎤 SPEECH TO TEXT
+# ==============================
 
         import speech_recognition as sr
 
@@ -1117,9 +1117,9 @@ def voice_handler(message):
 
             return
 
-        # ==============================
-        # 🤖 SEND VOICE TEXT TO GEMINI
-        # ==============================
+# ==============================
+# 🤖 SEND VOICE TEXT TO GEMINI
+# ==============================
 
         user_id = message.from_user.id
 
@@ -1154,9 +1154,9 @@ def voice_handler(message):
 
         answer = response.text
 
-        # ==============================
-        # 🧠 SAVE MEMORY
-        # ==============================
+# ==============================
+# 🧠 SAVE MEMORY
+# ==============================
 
         add_memory(
             user_id,
@@ -1170,9 +1170,9 @@ def voice_handler(message):
             answer
         )
 
-        # ==============================
-        # 💬 SEND AI REPLY
-        # ==============================
+# ==============================
+# 💬 SEND AI REPLY
+# ==============================
 
         bot.reply_to(
             message,
@@ -1183,9 +1183,9 @@ def voice_handler(message):
             + answer
         )
 
-        # ==============================
-        # 🗑️ DELETE TEMP FILES
-        # ==============================
+# ==============================
+# 🗑️ DELETE TEMP FILES
+# ==============================
 
         try:
 
@@ -1240,9 +1240,9 @@ def ai_reply(message):
         for role, text in history:
             conversation += role + ": " + text + "\n"
 
-        # ==============================
-        # 🌐 AUTO WEB SEARCH
-        # ==============================
+# ==============================
+# 🌐 AUTO WEB SEARCH
+# ==============================
 
         if needs_web_search(message.text):
 
