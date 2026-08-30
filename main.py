@@ -202,6 +202,84 @@ def clear_memory(user_id):
 
 init_database()
     
+# ==============================
+# 🌦️ LIVE WEATHER
+# ==============================
+
+def get_weather(city):
+
+    try:
+        # City name → latitude/longitude
+        geo_url = "https://geocoding-api.open-meteo.com/v1/search"
+
+        geo_response = requests.get(
+            geo_url,
+            params={
+                "name": city,
+                "count": 1,
+                "language": "en",
+                "format": "json"
+            },
+            timeout=10
+        )
+
+        geo_data = geo_response.json()
+
+        if not geo_data.get("results"):
+            return None
+
+        location = geo_data["results"][0]
+
+        latitude = location["latitude"]
+        longitude = location["longitude"]
+        city_name = location["name"]
+        country = location.get("country", "")
+
+        # Current weather
+        weather_url = "https://api.open-meteo.com/v1/forecast"
+
+        weather_response = requests.get(
+            weather_url,
+            params={
+                "latitude": latitude,
+                "longitude": longitude,
+                "current": (
+                    "temperature_2m,"
+                    "relative_humidity_2m,"
+                    "apparent_temperature,"
+                    "precipitation,"
+                    "weather_code,"
+                    "wind_speed_10m"
+                ),
+                "timezone": "auto"
+            },
+            timeout=10
+        )
+
+        weather = weather_response.json()
+
+        current = weather.get("current")
+
+        if not current:
+            return None
+
+        return {
+            "city": city_name,
+            "country": country,
+            "temperature": current.get("temperature_2m"),
+            "feels_like": current.get("apparent_temperature"),
+            "humidity": current.get("relative_humidity_2m"),
+            "precipitation": current.get("precipitation"),
+            "wind": current.get("wind_speed_10m"),
+            "weather_code": current.get("weather_code")
+        }
+
+    except Exception as e:
+
+        print("WEATHER ERROR:", e)
+
+        return None
+
 # =========================
 # GOOGLE SHEETS
 # =========================
