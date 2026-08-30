@@ -1022,6 +1022,92 @@ def search_command(message):
             message,
             "❌ Web Search Error:\n" + str(e)
         )
+# ==============================
+# 🎤 VOICE AI
+# ==============================
+
+@bot.message_handler(content_types=["voice"])
+def voice_handler(message):
+
+    try:
+        bot.send_chat_action(
+            message.chat.id,
+            "typing"
+        )
+
+        # Telegram voice file
+        file_info = bot.get_file(message.voice.file_id)
+
+        # Voice download
+        voice_data = bot.download_file(
+            file_info.file_path
+        )
+
+        # Temporary OGG file
+        with tempfile.NamedTemporaryFile(
+            suffix=".ogg",
+            delete=False
+        ) as temp_file:
+
+            temp_file.write(voice_data)
+            ogg_path = temp_file.name
+
+        # Convert OGG → WAV
+        from pydub import AudioSegment
+
+        wav_path = ogg_path.replace(
+            ".ogg",
+            ".wav"
+        )
+
+        audio = AudioSegment.from_ogg(ogg_path)
+        audio.export(wav_path, format="wav")
+
+        # Speech → Text
+        import speech_recognition as sr
+
+        recognizer = sr.Recognizer()
+
+        with sr.AudioFile(wav_path) as source:
+            audio_data = recognizer.record(source)
+
+        try:
+            text = recognizer.recognize_google(
+                audio_data,
+                language="hi-IN"
+            )
+
+        except sr.UnknownValueError:
+
+            bot.reply_to(
+                message,
+                "❌ Voice samajh nahi aayi.\n"
+                "Please dobara clearly bolkar bhejo."
+            )
+            return
+
+        # User ko recognized text dikhao
+        bot.reply_to(
+            message,
+            "🎤 Aapne kaha:\n\n" + text
+        )
+
+        # Temporary files delete
+        try:
+            os.remove(ogg_path)
+            os.remove(wav_path)
+        except:
+            pass
+
+    except Exception as e:
+
+        print("VOICE ERROR:", e)
+
+        bot.reply_to(
+            message,
+            "❌ Voice process nahi ho payi.\n\n"
+            + str(e)
+        )
 # =========================
 # AI MESSAGE HANDLER
 # =========================
