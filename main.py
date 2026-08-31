@@ -1403,8 +1403,6 @@ def voice_handler(message):
 # AI MESSAGE HANDLER
 # =========================
 
-
-
 @bot.message_handler(func=lambda message: True)
 def ai_reply(message):
 
@@ -1423,6 +1421,83 @@ def ai_reply(message):
 
         for role, text in history:
             conversation += role + ": " + text + "\n"
+# --- Added time handlers here so they run before the catch-all AI handler ---
+@bot.message_handler(commands=["time", "india_time"])
+def time_command(message):
+    bot.send_chat_action(message.chat.id, "typing")
+    bot.reply_to(message, get_india_datetime())
+
+# Optional: text-based trigger (if user types "time" / "समय" / "india time")
+@bot.message_handler(
+    func=lambda message:
+    message.content_type == "text"
+    and any(word in message.text.lower() for word in ["time", "india time", "समय", "time batao", "india ka time"])
+)
+def time_text_handler(message):
+    bot.send_chat_action(message.chat.id, "typing")
+    bot.reply_to(message, get_india_datetime())
+        # 🧠 AI INTENT ROUTER
+        intent = detect_intent(message.text)
+
+        print("🧠 Detected Intent:", intent)
+
+        if intent == "DATE":
+            tz = pytz.timezone("Asia/Kolkata")
+            now = datetime.now(tz)
+
+            days = {
+                "Monday": "सोमवार",
+                "Tuesday": "मंगलवार",
+                "Wednesday": "बुधवार",
+                "Thursday": "गुरुवार",
+                "Friday": "शुक्रवार",
+                "Saturday": "शनिवार",
+                "Sunday": "रविवार"
+            }
+
+            day = now.strftime("%A")
+
+            bot.reply_to(
+                message,
+                f"📅 आज की जानकारी\n\n"
+                f"📆 दिन: {days.get(day, day)} ({day})\n"
+                f"🗓️ तारीख: {now.strftime('%d-%m-%Y')}\n"
+                f"🇮🇳 समय: {now.strftime('%I:%M:%S %p')}"
+            )
+            return
+
+        if intent == "TIME":
+            bot.reply_to(
+                message,
+                get_india_datetime()
+            )
+            return
+
+        if intent == "WEB_SEARCH":
+            results = web_search(message.text, 5)
+
+            if results:
+                reply = "🌐 Web Search Results\n\n"
+
+                for i, result in enumerate(results, 1):
+                    reply += (
+                        f"{i}. {result['title']}\n"
+                        f"{result['body'][:300]}\n"
+                        f"🔗 {result['url']}\n\n"
+                    )
+
+                bot.reply_to(
+                    message,
+                    reply,
+                    disable_web_page_preview=True
+                )
+            else:
+                bot.reply_to(
+                    message,
+                    "❌ Search results nahi mile."
+                )
+
+            return
 
 # ==============================
 # 🌐 AUTO WEB SEARCH
