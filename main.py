@@ -702,9 +702,11 @@ def url_downloader(message):
         "photo"
     ]
 
-    if any(word in text.lower() for word in download_words):
+    # Purana system bhi chalega + sirf link bhejne par bhi download hoga
+    if is_url(text):
         process_download(message, url)
-
+    elif any(word in text.lower() for word in download_words):
+        process_download(message, url)
 def process_download(message, url):
 
     try:
