@@ -1403,21 +1403,7 @@ def voice_handler(message):
 # AI MESSAGE HANDLER
 # =========================
 
-# --- Added time handlers here so they run before the catch-all AI handler ---
-@bot.message_handler(commands=["time", "india_time"])
-def time_command(message):
-    bot.send_chat_action(message.chat.id, "typing")
-    bot.reply_to(message, get_india_datetime())
 
-# Optional: text-based trigger (if user types "time" / "समय" / "india time")
-@bot.message_handler(
-    func=lambda message:
-    message.content_type == "text"
-    and any(word in message.text.lower() for word in ["time", "india time", "समय", "time batao", "india ka time"])
-)
-def time_text_handler(message):
-    bot.send_chat_action(message.chat.id, "typing")
-    bot.reply_to(message, get_india_datetime())
 
 @bot.message_handler(func=lambda message: True)
 def ai_reply(message):
@@ -1457,6 +1443,22 @@ def ai_reply(message):
                 )
 
                 conversation += f"""
+
+# --- Added time handlers here so they run before the catch-all AI handler ---
+@bot.message_handler(commands=["time", "india_time"])
+def time_command(message):
+    bot.send_chat_action(message.chat.id, "typing")
+    bot.reply_to(message, get_india_datetime())
+
+# Optional: text-based trigger (if user types "time" / "समय" / "india time")
+@bot.message_handler(
+    func=lambda message:
+    message.content_type == "text"
+    and any(word in message.text.lower() for word in ["time", "india time", "समय", "time batao", "india ka time"])
+)
+def time_text_handler(message):
+    bot.send_chat_action(message.chat.id, "typing")
+    bot.reply_to(message, get_india_datetime())
 
 🌐 WEB SEARCH RESULTS
 
