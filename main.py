@@ -140,7 +140,81 @@ Meaning clear ho to seedha useful jawab do.
 Hindi, Hinglish, English aur common typing mistakes ko naturally samjho.
 """
 
+# ==============================
+# 🧠 AI INTENT ROUTER
+# ==============================
 
+def detect_intent(text):
+    try:
+        prompt = f"""
+Tum Dark AI ke intent router ho.
+
+User ke message ka meaning samjho, chahe spelling ya grammar galat ho.
+
+Sirf inme se EK intent return karo:
+
+TIME
+DATE
+WEATHER
+CURRENCY
+WEB_SEARCH
+DOWNLOAD
+PHONE_NUMBER
+CHAT
+
+Rules:
+- Aaj ka din/date poocha ho → DATE
+- Abhi ka time poocha ho → TIME
+- Kisi city ka mausam poocha ho → WEATHER
+- Currency convert/rate poocha ho → CURRENCY
+- Latest/current/news/live information poochi ho → WEB_SEARCH
+- Video/photo/link download karne ko bola ho → DOWNLOAD
+- Phone number check karne ko bola ho → PHONE_NUMBER
+- Baaki sab → CHAT
+
+Examples:
+"aj kon sa din h" → DATE
+"aaj ki det kya h" → DATE
+"aj kitne bje h" → TIME
+"delhi ka mosam kesa h" → WEATHER
+"100 dollar ko rupees me badlo" → CURRENCY
+"india ki latest news batao" → WEB_SEARCH
+"ye video download krdo https://example.com/x" → DOWNLOAD
+"is number ko check kro +919876543210" → PHONE_NUMBER
+"python kya hai" → CHAT
+
+User message:
+{text}
+
+Sirf intent ka naam return karo.
+"""
+
+        response = client.models.generate_content(
+            model="gemini-3.6-flash",
+            contents=prompt
+        )
+
+        intent = response.text.strip().upper()
+
+        allowed = [
+            "TIME",
+            "DATE",
+            "WEATHER",
+            "CURRENCY",
+            "WEB_SEARCH",
+            "DOWNLOAD",
+            "PHONE_NUMBER",
+            "CHAT"
+        ]
+
+        if intent in allowed:
+            return intent
+
+        return "CHAT"
+
+    except Exception as e:
+        print("INTENT ROUTER ERROR:", e)
+        return "CHAT"
 # =========================
 # PERMANENT MEMORY
 # =========================
