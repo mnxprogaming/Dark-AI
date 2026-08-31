@@ -360,18 +360,18 @@ def weather_handler(message):
             return
 
         reply = f"""
-🌦️ Live Weather
+ 🌦️ Live Weather
 
-📍 Location: {result["city"]}, {result["country"]}
+ 📍 Location: {result["city"]}, {result["country"]}
 
-🌡️ Temperature: {result["temperature"]}°C
-🤔 Feels Like: {result["feels_like"]}°C
-💧 Humidity: {result["humidity"]}%
-🌧️ Precipitation: {result["precipitation"]} mm
-💨 Wind Speed: {result["wind"]} km/h
+ 🌡️ Temperature: {result["temperature"]}°C
+ 🤔 Feels Like: {result["feels_like"]}°C
+ 💧 Humidity: {result["humidity"]}%
+ 🌧️ Precipitation: {result["precipitation"]} mm
+ 💨 Wind Speed: {result["wind"]} km/h
 
-🤖 Dark AI
-"""
+ 🤖 Dark AI
+ """
 
         bot.reply_to(message, reply)
 
@@ -383,7 +383,6 @@ def weather_handler(message):
             message,
             "❌ Weather Error:\n" + str(e)
         )
-
 # =========================
 # 💰 CURRENCY CONVERTER
 # =========================
@@ -460,15 +459,15 @@ def currency_command(message):
         converted, rate = result
 
         reply = f"""
-💰 Currency Converter
+ 💰 Currency Converter
 
-💵 Amount: {amount:g} {from_currency}
-🔄 Rate: 1 {from_currency} = {rate:.4f} {to_currency}
+ 💵 Amount: {amount:g} {from_currency}
+ 🔄 Rate: 1 {from_currency} = {rate:.4f} {to_currency}
 
-💸 Result: {converted:.2f} {to_currency}
+ 💸 Result: {converted:.2f} {to_currency}
 
-🤖 Dark AI
-"""
+ 🤖 Dark AI
+ """
 
         bot.reply_to(message, reply)
 
@@ -525,12 +524,12 @@ def save_to_google_sheet(user_id, username, message, reply):
 def start_command(message):
 
     welcome = f"""
-🤖 Welcome to {AI_NAME}! ❤️
+ 🤖 Welcome to {AI_NAME}! ❤️
 
-Main tumhara personal AI assistant hoon.
+ Main tumhara personal AI assistant hoon.
 
-👇 Neeche menu se feature choose karo:
-"""
+ 👇 Neeche menu se feature choose karo:
+ """
 
     markup = tg_types.InlineKeyboardMarkup(row_width=2)
 
@@ -905,23 +904,23 @@ def phone_number_handler(message):
     valid_text = "Yes" if result["valid"] else "No"
 
     reply = f"""
-📱 Number Check
+ 📱 Number Check
 
-Number: {phone}
-✅ Valid: {valid_text}
-🇮🇳 Country: {result["country"] or "Unknown"}
-📡 Carrier: {result["carrier"]}
-📱 Type: {result["type"]}
-📍 Region: {result["region"]}
+ Number: {phone}
+ ✅ Valid: {valid_text}
+ 🇮🇳 Country: {result["country"] or "Unknown"}
+ 📡 Carrier: {result["carrier"]}
+ 📱 Type: {result["type"]}
+ 📍 Region: {result["region"]}
 
-🔎 Public Information
-Name: Public source se available nahi
-Business: Public source se available nahi
-Website: Public source se available nahi
-Spam reports: Public source se available nahi
+ 🔎 Public Information
+ Name: Public source se available nahi
+ Business: Public source se available nahi
+ Website: Public source se available nahi
+ Spam reports: Public source se available nahi
 
-⚠️ Sirf publicly available information dikhayi gayi hai.
-"""
+ ⚠️ Sirf publicly available information dikhayi gayi hai.
+ """
 
     bot.reply_to(message, reply)
 # =========================
@@ -1318,6 +1317,23 @@ def voice_handler(message):
 # =========================
 # AI MESSAGE HANDLER
 # =========================
+
+# --- Added time handlers here so they run before the catch-all AI handler ---
+@bot.message_handler(commands=["time", "india_time"])
+def time_command(message):
+    bot.send_chat_action(message.chat.id, "typing")
+    bot.reply_to(message, get_india_datetime())
+
+# Optional: text-based trigger (if user types "time" / "समय" / "india time")
+@bot.message_handler(
+    func=lambda message:
+    message.content_type == "text"
+    and any(word in message.text.lower() for word in ["time", "india time", "समय", "time batao", "india ka time"])
+)
+def time_text_handler(message):
+    bot.send_chat_action(message.chat.id, "typing")
+    bot.reply_to(message, get_india_datetime())
+
 @bot.message_handler(func=lambda message: True)
 def ai_reply(message):
 
