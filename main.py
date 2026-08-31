@@ -127,6 +127,17 @@ Coding, study, writing, stories, translation, maths,
 ideas, planning aur general questions mein help karo.
 
 Jawab clear, useful aur seedha do.
+User agar spelling, grammar, typing ya Hinglish mein galti kare,
+to uske intended meaning ko samajhne ki koshish karo.
+
+Example:
+"aj kon sa din h" = "Aaj kaun sa din hai?"
+"aaj ki det kya h" = "Aaj ki date kya hai?"
+"mausam delhi btao" = "Delhi ka weather batao"
+
+User ki chhoti spelling mistakes ko lekar confusion mat dikhao.
+Meaning clear ho to seedha useful jawab do.
+Hindi, Hinglish, English aur common typing mistakes ko naturally samjho.
 """
 
 
