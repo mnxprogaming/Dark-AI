@@ -7,3 +7,4 @@ phonenumbers
 ddgs
 SpeechRecognition
 pydub
+pytz
