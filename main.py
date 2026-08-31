@@ -202,6 +202,24 @@ def clear_memory(user_id):
 
 
 init_database()
+
+# ==============================
+# 🕐 LIVE DATE & TIME
+# ==============================
+
+def get_india_datetime():
+    try:
+        tz = pytz.timezone("Asia/Kolkata")
+        now = datetime.now(tz)
+
+        return (
+            f"🇮🇳 India Time\n"
+            f"📅 Date: {now.strftime('%d-%m-%Y')}\n"
+            f"📆 Day: {now.strftime('%A')}\n"
+            f"🕐 Time: {now.strftime('%I:%M:%S %p')}"
+        )
+    except Exception as e:
+        return f"❌ Date/Time error: {e}"
     
 # ==============================
 # 🌦️ LIVE WEATHER
